@@ -1,0 +1,10 @@
+name = jean_module 
+description = Create my own module to make trivial mends. 
+core = 7.x
+
+; Information added by drupal.org packaging script on 2012-11-05
+version = "7.x-1.7"
+core = "7.x"
+project = "jean_module"
+datestamp = "1352084822"
+

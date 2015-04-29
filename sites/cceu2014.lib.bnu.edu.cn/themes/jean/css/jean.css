@@ -1,0 +1,74 @@
+#views_slideshow_cycle_teaser_section_slideshow-block{
+  margin: 0 auto;
+}
+#header {
+    background-color: #BABABA!important;
+    background-image: -moz-linear-gradient(center top , #3D7878 0%, #6FB7B7 100%)!important;
+    background-size:cover;
+   /* background-image:url("../con_head_bg.jpg")!important;*/
+    background-position:top left;
+}
+
+#header div{
+    height: 100%;
+}
+
+#header #main-menu{
+    position:absolute;
+    bottom:0px;
+}
+
+#secondary-menu-links {
+    list-style: none;
+}
+
+#secondary-menu-links li{
+    display:inline;
+}
+
+#secondary-menu-links li a {
+    color: #144623!important;
+    font-size: 18px;
+    padding: 0.4em;
+}
+
+#main-menu-links.front_navigation {
+}
+
+#main-menu-links.front_navigation li {
+}
+#main-menu-links.front_navigation li a {
+}
+
+#registration-form label{
+    display:inline-block;
+    width: 120px;
+    text-align: right;
+}
+
+#main-menu-links {
+    font-size: 1.2em;
+}
+
+table{
+    font-size: 1.2em;
+}
+
+#secondary-menu-links{
+    font-size: 1.2em;
+}
+.breadcrumb{
+    font-size: 1.2em;
+}
+
+#footer-wrapper {
+    padding: 5px 0px;
+}
+
+.node-teaser h2 a {
+    color: #009393;
+}
+
+#featured {
+    padding: 20px 10px 20px;
+}

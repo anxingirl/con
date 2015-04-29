@@ -1,0 +1,405 @@
+<?php
+
+/**
+ *Implements hook_help().
+ */
+function searchtabs_help($path, $arg){
+    if ($path == 'admin/help#searchtabs'){
+        return t('This module creates several search tabs.');
+    }
+}
+/**
+ * Implements hook_block_info().
+ */
+function searchtabs_block_info(){
+    $blocks = array();
+    $blocks['searchtabs_form'] = array(
+        'info' => t('A block for searchtabs form.'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+    $blocks['searchtabs_primoform'] = array(
+        'info' => t('A block for primo search'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+    $blocks['searchtabs_metalibform'] = array(
+        'info' => t('A block for metalib search'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+    $blocks['searchtabs_sfxform'] = array(
+        'info' => t('A block for sfx search'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+    $blocks['searchtabs_baiduform'] = array(
+        'info' => t('A block for baidu xueshu search'),
+        'cache' => DRUPAL_NO_CACHE,
+    );
+    return $blocks; 
+}
+/**
+ * Implements hook_block_view().
+ */
+function searchtabs_block_view($block_name = ''){
+    switch ($block_name){
+      case 'searchtabs_form':
+      $block['content'] = drupal_get_form('searchtabs_block_form');
+      return $block;
+      case 'searchtabs_primoform':
+      $block['content'] = drupal_get_form('searchtabs_block_primoform');
+      return $block;
+      case 'searchtabs_metalibform':
+      $block['content'] = drupal_get_form('searchtabs_block_metalibform');
+      return $block;
+      case 'searchtabs_sfxform':
+      $block['content'] = drupal_get_form('searchtabs_block_sfxform');
+      return $block;
+      case 'searchtabs_baiduform':
+      $block['content'] = drupal_get_form('searchtabs_block_baiduform');
+      return $block;
+    }
+}
+/**
+ * Implements hook_theme()
+ */
+
+function searchtabs_theme() {
+   return array(
+     'searchtabs_block_form' => array(
+     'render element' => 'form',
+     'template' => 'searchtabs-block-form',
+   ),
+     
+     'searchtabs_block_primoform' => array(
+     'render element' => 'form',
+     'template' => 'searchtabs-block-primoform',
+   ),
+   );
+}
+
+/**
+ * Implements hook_forms
+ */
+/*
+function searchtabs_forms(){
+  $forms['searchtabs_block_primoform']= array(
+    'callback' => 'searchtabs_box',
+    'callback arguments' => array('searchtabs_block_primoform'),
+  );
+  return $forms;
+}
+*/
+/**
+  * Form builder; Output a search form for the search block's search box.
+  *
+  * @ingroup forms
+  * @see search_box_form_submit()
+  * @see search-block-form.tpl.php
+  */
+function searchtabs_box($form, &$form_state, $form_id) {
+  $form[$form_id] = array(
+     '#type' => 'textfield',
+     '#title' => t('Search'),
+     '#title_display' => 'invisible',
+     '#size' => 24,
+     '#default_value' => '',
+     '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+   );
+   $form['actions'] = array('#type' => 'actions');
+   $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Search'));
+   $form['#submit'][] = 'searchtabs_box_form_submit';
+   return $form;
+ }
+/**
+ * Form builder; Output a search form for the searchtabs block
+ *
+ *@ingroup forms
+ *@see searchtabs_box_form_submit()
+ *@see search-block-form.tpl.php
+ */
+function searchtabs_block_form($form, &$form_state){ 
+  $form['find_code'] = array(
+        '#type' => 'select',
+        '#options' => array(
+          'WRD' => t('Search All'),
+          'WTI' => t('Title & Keys'),
+          'WET' => t('Title'),
+          'WAU' => t('Author'),
+          'WSU' => t('Subject Term'),
+          'WPU' => t('Publisher'),
+          'ISS' => t('ISSN'),
+          'WIS' => t('ISBN'),
+          'CAL' => t('Call Number'),
+          'CLC' => t('Classification Codes'),
+        ),
+        '#default_value' => 'WRD',
+  ); 
+  $form['request'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Search'),
+        '#title_display' => 'invisible',
+        '#size' => 15,
+        '#default_value' => '',
+        '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+  );
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Search'));
+  $form['#submit'][] = 'searchtabs_box_form_submit';
+  $form['#theme'] = 'searchtabs_block_form'; 
+  return $form;
+}
+/**
+ * Form builder; Output a search form for the searchtabs block
+ *
+ *@ingroup forms
+ *@see searchtabs_box_form_submit()
+ *@see search-block-form.tpl.php
+ */
+function searchtabs_block_primoform($form, &$form_state){ 
+  $form['selected'] = array(
+        '#type' => 'select',
+        '#title' => t('Selected'),
+        '#options' => array(
+          0 => t('No'),
+          1 => t('Yes'),
+        ),
+        '#default_value' => 0,
+  ); 
+  $form['searchtabs_block_primoform'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Search'),
+        '#title_display' => 'invisible',
+        '#size' => 15,
+        '#default_value' => '',
+        '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+    );
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Search'));
+  $form['#submit'][] = 'searchtabs_box_form_submit';
+  $form['#theme'] = 'searchtabs_block_primoform'; 
+  return $form;
+}
+/*
+ * Form builder; Output a search form for the searchtabs block
+ */
+function searchtabs_block_baiduform($form, &$form_state){
+  $form['wd'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Search'),
+        '#title_display' => 'invisible',
+        '#size' => 15,
+        '#default_value' => '',
+        '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+  );
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Search'));
+  $form['#submit'][] = 'searchtabs_box_form_baidusubmit';
+  $form['#theme'] = 'searchtabs_block_form'; 
+  return $form;
+}
+/*
+ * Form builder; Output a search form for the searchtabs block
+ */
+function searchtabs_block_sfxform($form, &$form_state){
+  $form['param_pattern_value'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Search'),
+        '#title_display' => 'invisible',
+        '#size' => 15,
+        '#default_value' => '',
+        '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+  );
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Search'));
+  $form['#submit'][] = 'searchtabs_box_form_sfxsubmit';
+  $form['#theme'] = 'searchtabs_block_form'; 
+  return $form;
+}
+/*
+ * Form builder; Output a search form for the searchtabs block
+ */
+function searchtabs_block_metalibform($form, &$form_state){
+  $form['F_WRD'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Search'),
+        '#title_display' => 'invisible',
+        '#size' => 15,
+        '#default_value' => '',
+        '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+  );
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Search'));
+  $form['#submit'][] = 'searchtabs_box_form_metalibsubmit';
+  $form['#theme'] = 'searchtabs_block_form'; 
+  return $form;
+}
+function searchtabs_box_form_baidusubmit($form, &$form_state){
+   if ($form_state['values']['wd'] == '') {
+    form_set_error('wd', t('Please enter some keywords.'));
+  }
+  else{
+    $form_id = $form['form_id']['#value'];
+      $form_state['redirect'] = array('searchtabs/baidu',
+      array(
+        'query' => array(
+          'wd' => trim($form_state['values']['wd']),
+        ),
+     ), 
+    );
+  }
+}
+function searchtabs_box_form_sfxsubmit($form, &$form_state){
+   if ($form_state['values']['param_pattern_value'] == '') {
+    form_set_error('param_pattern_value', t('Please enter some keywords.'));
+  }
+  else{
+    $form_id = $form['form_id']['#value'];
+      $form_state['redirect'] = array('searchtabs/sfx',
+      array(
+        'query' => array(
+          'param_pattern_value' => trim($form_state['values']['param_pattern_value']),
+        ),
+     ), 
+    );
+  }
+}
+function searchtabs_box_form_metalibsubmit($form, &$form_state){
+   if ($form_state['values']['F_WRD'] == '') {
+    form_set_error('keys', t('Please enter some keywords.'));
+  }
+  else{
+    $form_id = $form['form_id']['#value'];
+    
+   //http://search.lib.bnu.edu.cn:8080/V?FUNC=FIND-DB-1-LOCATE&MODE=locate&F_WRD=science&SUBMIT=search&pds_handle=GUEST
+   //dpm('Location:http://search.lib.bnu.edu.cn:8080/V?FUNC=FIND-DB-1-LOCATE&MODE=locate&SUBMIT=search&pds_handle=GUEST&F-WRD='.$form_state['values']['F-WRD']);
+   $form_state['redirect'] = array('searchtabs/metalib',
+      array(
+        'query' => array(
+          'F_WRD' => trim($form_state['values']['F_WRD']),
+        ),
+     ), 
+    );
+  }
+}
+/**
+ * Process a block search form submission.
+ */
+function searchtabs_box_form_submit($form, &$form_state){
+  if (isset($_GET['destination'])) {
+    unset($_GET['destination']);
+  }
+
+  if ($form_state['values']['request'] == '') {
+    form_set_error('keys', t('Please enter some keywords.'));
+  }
+  else{
+    $form_id = $form['form_id']['#value'];
+   
+   //dpm('Location:http://opac.lib.bnu.edu.cn:8080/F?func=find-m&find_code='.$form_state['values']['find_code'].'&request='.$form_state['values']['request']);
+   $form_state['redirect'] = array('searchtabs/guancang',
+      array(
+        'query' => array(
+          'request' => trim($form_state['values']['request']),
+          'find_code' => trim($form_state['values']['find_code']),
+        ),
+     ), 
+    );
+  }
+}
+
+/**
+ *  Implements hook_menu().
+ */
+function searchtabs_menu(){
+   $items['searchtabs/%'] = array(
+     'title' => 'Searchtabs',
+     'page callback' => 'searchtabs_guancang_redirect',
+     'page arguments' => array(1),
+     'access callback' => TRUE,
+     //'access callback' => 'searchtabs_is_active',
+     'type' => MENU_SUGGESTED_ITEM,
+     'file' => 'searchtabs.pages.inc',
+    ); 
+   $items['searchtabs2'] = array(
+     'title' => 'Searchtabs',
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('searchtabs_block_form'),
+     'access callback' => TRUE,
+     //'access callback' => 'searchtabs_is_active',
+     'type' => MENU_SUGGESTED_ITEM,
+    );
+    return $items;
+
+}
+
+/**
+ * Determines access for the ?q=search path
+ */
+function searchtabs_is_active(){
+    //return user_access('search_content') &&  search_get_info().
+    return user_access('search content');
+}
+
+/**
+ * Implements hook_permission
+ */
+function searchtabs_permission(){
+    return array(
+       'administer searchtabs' => array(
+       'title' => t('Administer searchtabs'),
+       ),
+       'searchtabs content' => array(
+       'title' => t('Use searchtabs'),
+       ),
+    );
+}
+
+/**
+ * Process variables for search-block-form.tpl.php.
+ *
+ * The $variables array contains the following arguments:
+ * - $form
+ *
+ * @see search-block-form.tpl.php
+ */
+function template_preprocess_searchtabs_block_form(&$variables) {
+
+  $variables['searchtabs'] = array();
+  $hidden = array();
+  // Provide variables named after form keys so themers can print each element independently.
+  foreach (element_children($variables['form']) as $key) {
+    $type = isset($variables['form'][$key]['#type']) ? $variables['form'][$key]['#type'] : '';
+    if ($type == 'hidden' || $type == 'token') {
+      $hidden[] = drupal_render($variables['form'][$key]);
+    }
+    else {
+      $variables['searchtabs'][$key] = drupal_render($variables['form'][$key]);
+    }
+  }
+  // Hidden form elements have no value to themers. No need for separation.
+  $variables['searchtabs']['hidden'] = implode($hidden);
+  // Collect all form elements to make it easier to print the whole form.
+  $variables['searchtabs_form'] = implode($variables['searchtabs']);
+}
+
+function template_preprocess_searchtabs_block_primoform(&$variables) {
+  //dpm($variables);
+  $variables['searchtabs'] = array();
+  $hidden = array();
+  // Provide variables named after form keys so themers can print each element independently.
+  foreach (element_children($variables['form']) as $key) {
+    $type = isset($variables['form'][$key]['#type']) ? $variables['form'][$key]['#type'] : '';
+    if ($type == 'hidden' || $type == 'token') {
+      $hidden[] = drupal_render($variables['form'][$key]);
+    }
+    else {
+      $variables['searchtabs'][$key] = drupal_render($variables['form'][$key]);
+    }
+  }
+  // Hidden form elements have no value to themers. No need for separation.
+  $variables['searchtabs']['hidden'] = implode($hidden);
+  // Collect all form elements to make it easier to print the whole form.
+  $variables['searchtabs_form'] = implode($variables['searchtabs']);
+
+}

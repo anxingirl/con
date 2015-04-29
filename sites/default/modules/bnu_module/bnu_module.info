@@ -1,0 +1,8 @@
+name = bnu_module
+description = Add search blocks for bnu_module.Add external user validateion.
+packages = bnu_module
+core = 7.x
+files[] = bnu_module.module
+configure = admin/settings/bnu_module
+
+_

@@ -1,0 +1,183 @@
+<?php
+//return the current drupal user id (uid)
+function get_user_id() {
+  global $user;
+    return $user->uid;
+}
+/**
+ * Implements hook_menu_alter()
+ */
+function jean_module_menu_alter(&$menu) {
+    foreach (commerce_info_fields('commerce_product_reference') as $field_name => $field) {
+    foreach ($field['bundles'] as $type => $bundles) {
+      
+      if ($type == "commerce_line_item" || $type == "commerce_product") {
+        continue;
+      }
+      $menu[$type . '/%entity_object/own_registration'] = array(
+        'load arguments' => array($type),
+        'title' => 'Own Registration',
+        'page callback' => 'registration_own_registrations_page',
+        'page arguments' => array(0, 1),
+        'access callback' => 'registration_register_page_access',
+        'access arguments' => array(0, 1),
+        'type' => MENU_LOCAL_TASK,
+      );
+    }
+  }
+}
+
+
+/**
+ * Page callback: Show a list of registrations for a host entity.
+ *
+ * @param string $entity_type
+ *   The host entity type.
+ * @param object $entity
+ *   The host entity.
+ *
+ * @return array
+ *   A render array
+ *
+ * @see registration_administer_registrations_access()
+ * @see registration_menu()
+ */
+function registration_own_registrations_page($entity_type, $entity) {
+  dpm("x");
+  $header = array(
+    array(
+      'data' => t('id'),
+      'field' => 'registration_id',
+      'type' => 'property',
+      'specifier' => 'registration_id'
+    ),
+    array(
+      'data' => t('Email'),
+    ),
+    array(
+      'data' => t('User'),
+      'field' => 'user_uid',
+      'type' => 'property',
+      'specifier' => 'user_uid'
+    ),
+    array(
+      'data' => t('Created By'),
+      'field' => 'author_uid',
+      'type' => 'property',
+      'specifier' => 'author_uid'
+    ),
+    array(
+      'data' => t('Count'),
+      'field' => 'count',
+      'type' => 'property',
+      'specifier' => 'count'
+    ),
+    array(
+      'data' => t('Created'),
+      'field' => 'created',
+      'sort' => 'desc',
+      'type' => 'property',
+      'specifier' => 'created'
+    ),
+    array(
+      'data' => t('State'),
+      'field' => 'state',
+      'type' => 'property',
+      'specifier' => 'state'
+    ),
+    array('data' => t('Actions')),
+  );
+
+  list($entity_id) = entity_extract_ids($entity_type, $entity);
+  $label = entity_label($entity_type, $entity);
+  $query = new EntityFieldQuery;
+  $result = $query
+    ->entityCondition('entity_type', 'registration')
+    ->propertyCondition('entity_id', $entity_id)
+    ->propertyCondition('entity_type', $entity_type)
+    ->propertyCondition('author_uid', get_user_id())
+    ->pager(20)
+    ->tableSort($header)
+    ->execute();
+
+  if (!empty($result['registration'])) {
+    $registrations = registration_load_multiple(array_keys($result['registration']));
+    $rows = array();
+
+    foreach ($registrations as $registration) {
+      $wrapper = entity_metadata_wrapper('registration', $registration);
+      $author = $wrapper->author->value();
+      $user = $wrapper->user->value();
+      $state = $wrapper->state->value();
+
+      $author_col = '';
+      if ($registration->author_uid) {
+        $author_col = theme('username', array('account' => $author));
+      }
+
+      $user_col = '';
+      if ($registration->user_uid) {
+        $user_col = theme('username', array('account' => $user));
+      }
+
+      $actions = array();
+      if (entity_access('view', 'registration', $registration)) {
+        $actions[] = l(t('View'), 'registration/' . $registration->registration_id);
+      }
+      if (entity_access('update', 'registration', $registration)) {
+        $actions[] = l(t('Edit'), 'registration/' . $registration->registration_id . '/edit', array('query' => drupal_get_destination()));
+      }
+      if (entity_access('delete', 'registration', $registration)) {
+        $actions[] = l(t('Delete'), 'registration/' . $registration->registration_id . '/delete', array('query' => drupal_get_destination()));
+      }
+
+      $rows[] = array(
+        l($registration->registration_id, 'registration/' . $registration->registration_id),
+        l($wrapper->mail->value(), 'mailto:' . $wrapper->mail->value()),
+        $user_col,
+        $author_col,
+        $registration->count,
+        format_date($registration->created),
+        ($state ? filter_xss_admin(entity_label('registration_state', $state)) : ''),
+        implode(' | ', $actions)
+      );
+    }
+
+    $settings = registration_entity_settings($entity_type, $entity_id);
+
+    $table = array(
+      'header' => $header,
+      'rows' => $rows
+    );
+    //delete the phrase about how many total number of spaces are filled.
+    if (false){
+    if ($settings['capacity'] != 0) {
+      $table['caption'] = t('List of registrations for %title. !count of !capacity spaces are filled.', array(
+        '%title' => $label,
+        '!count' => '<strong>' . registration_event_count($entity_type, $entity_id) . '</strong>',
+        '!capacity' => '<strong>' . $settings['capacity'] . '</strong>'
+      ));
+    }
+    else {
+      $table['caption'] = t('List of registrations for %title. !count spaces are filled.', array(
+        '%title' => $label,
+        '!count' => '<strong>' . registration_event_count($entity_type, $entity_id) . '</strong>',
+      ));
+    }
+    }
+
+    $out = theme('table', $table) . theme('pager');
+  }
+  else {
+    $out = t('You have no registrations for %name',
+      array('%name' => $label));
+  }
+
+  return $out;
+}
+
+/*
+*modify node/1/register title.
+*/
+function jean_module_preprocess_page(&$vars){
+}

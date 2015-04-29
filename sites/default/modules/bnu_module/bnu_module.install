@@ -1,0 +1,221 @@
+<?php
+
+
+/**
+ * @file
+ * Install hooks for bnu_module.
+ */
+
+
+/**
+ * Implementation of hook_requirements().
+ */
+function bnu_module_requirements($phase) {
+  $requirements = array();
+  return $requirements;
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function bnu_module_schema() {
+  //Create a table name bnu_status and store some info.
+  $schema['bnu_status'] = array(
+ 'description' => 'Bnu opac pds z303_bor_status table for roles',
+ 'fields'=>array(
+    'bid' => array(
+      'description' => 'Primary Key: Unique status ID.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+    'status' => array(
+      'description' => 'Z303_BOR_STATUS',
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => FALSE,
+    ),
+  'rid' => array(
+      'description' => 'Roles id',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+      'default' => 2,
+    ),
+  ),
+  'primary key' => array('bid'),
+  'indexes' => array(
+    'status' => array('status'),
+  ),
+ );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function bnu_module_install() {
+  //add data to table {bnu_status};
+  /*
+BOR-STATUS           ##### L ILL Borrower                                       71
+BOR-STATUS           ##### L ILL Borrower(BUPT)                                 72
+BOR-STATUS           ##### L ILL Borrower(ZGC)                                  73
+BOR-STATUS           ##### L In Transit                                         82
+BOR-STATUS           ##### L Kindergarten Stu.                                  83
+BOR-STATUS           ##### L Others                                             81
+BOR-STATUS           ##### L Undefined Users                                    88
+ */
+    $values = array(
+
+
+    array(
+    'bid' => 11,
+    'status' => 'Special Staff',
+    'rid' => 2,
+    ),
+    array(
+    'bid' => 12,
+    'status' => 'Senior Staff',
+    'rid' => 2,
+    ),
+    array(
+    'bid' => 13,
+    'status' => 'Intermediate Staff',
+    'rid' => 2,
+    ),
+    array(
+    'bid' => 14,
+    'status' => 'Other Staff',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 21,
+    'status' => 'Post Doctor',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 22,
+    'status' => 'Doctoral',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 23,
+    'status' => 'Masters',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 24,
+    'status' => 'Other Graduate',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 31,
+    'status' => 'Special Undergrad',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 32,
+    'status' => 'Undergrad.',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 41,
+    'status' => 'College Stu.',
+    'rid' => 2,       
+    ),
+            array(
+    'bid' => 51,
+    'status' => 'Senior Visiting Stu.',
+    'rid' => 2,       
+    ),
+            array(
+    'bid' => 52,
+    'status' => 'Intermediate Visiting Stu.',
+    'rid' => 2,       
+    ),
+            array(
+    'bid' => 53,
+    'status' => 'Other Visiting Stu.',
+    'rid' => 2,       
+    ),
+            array(
+    'bid' => 61,
+    'status' => 'Foreign Lecturer',
+    'rid' => 2,       
+    ),
+            array(
+    'bid' => 64,
+    'status' => 'Foreign Doctoral',
+    'rid' => 2,       
+    ),
+            array(
+    'bid' => 62,
+    'status' => 'Foreign Masters',
+    'rid' => 2,       
+    ),
+            array(
+    'bid' => 65,
+    'status' => 'Foreign Undergrad.',
+    'rid' => 2,       
+    ),
+     array(
+    'bid' => 63,
+    'status' => 'Other Foreign stu.',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 71,
+    'status' => 'ILL Borrower',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 72,
+    'status' => 'ILL Borrower(BUPT)',
+    'rid' => 2,       
+    ),
+                    array(
+    'bid' => 73,
+    'status' => 'ILL Borrower(ZGC)',
+    'rid' => 2,       
+    ),
+                    array(
+    'bid' => 82,
+    'status' => 'In Transit',
+    'rid' => 2,       
+    ),
+                    array(
+    'bid' => 83,
+    'status' => 'Kindergarten Stu.',
+    'rid' => 2,       
+    ),
+                    array(
+    'bid' => 81,
+    'status' => 'Others',
+    'rid' => 2,       
+    ),
+    array(
+    'bid' => 88,
+    'status' => 'Undefined Users',
+    'rid' => 2,       
+    ),
+    );
+    $query = db_insert('bnu_status')->fields(array('bid', 'status', 'rid'));
+    foreach ($values as $record) {
+      $query->values($record);
+    }
+    $query->execute();
+}
+/**
+ * Remove variables on uninstall.
+ */
+function bnu_module_uninstall() {
+  /*
+  db_query("DELETE FROM {variable} WHERE name LIKE 'backup_migrate_%'");
+  db_query("DELETE FROM {variable} WHERE name LIKE 'nodesquirrel_%'");
+  cache_clear_all('variables', 'cache');
+   */
+ if(db_table_exists('bnu_status')){
+$num_deleted = db_delete('bnu_status')
+  ->execute();
+ }
+}

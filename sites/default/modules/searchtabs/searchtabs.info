@@ -1,0 +1,9 @@
+name = searchtabs
+description = Enables Search Tabs for Front Page.
+package = Core
+version = VERSION
+core = 7.x
+configure = admin/config/searchtabs/settings
+stylesheets[all][] = searchtabs.css
+version = "7.32"
+project = "bnu"

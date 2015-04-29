@@ -1,0 +1,67 @@
+#header {
+    background-size:cover;
+   /* background-image:url("../con_head_bg.jpg")!important;*/
+    background-position:top left;
+}
+
+#header div{
+    height: 100%;
+}
+
+#header #main-menu{
+    position:absolute;
+    bottom:0px;
+}
+
+#secondary-menu-links {
+    list-style: none;
+}
+
+#secondary-menu-links li{
+    display:inline;
+}
+
+#secondary-menu-links li a {
+    color: #144623!important;
+    font-size: 18px;
+    padding: 0.4em;
+}
+
+#main-menu-links.front_navigation {
+    text-align:center;
+}
+
+#main-menu-links.front_navigation li {
+    float:none!important;
+    display:inline-block;
+}
+#main-menu-links.front_navigation li a {
+    background: none; 
+    float:none!important;
+    padding:0em;
+}
+
+#registration-form label{
+    display:inline-block;
+    width: 120px;
+    text-align: right;
+}
+
+#main-menu-links {
+    font-size: 1.2em;
+}
+
+table{
+    font-size: 1.2em;
+}
+
+#secondary-menu-links{
+    font-size: 1.2em;
+}
+.breadcrumb{
+    font-size: 1.2em;
+}
+
+#footer-wrapper {
+    padding: 5px 0px;
+}
