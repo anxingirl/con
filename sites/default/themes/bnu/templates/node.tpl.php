@@ -1,4 +1,3 @@
-node
 <article<?php print $attributes; ?>>
   <?php print $user_picture; ?>
   <?php print render($title_prefix); ?>
